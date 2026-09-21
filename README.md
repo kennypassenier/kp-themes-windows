@@ -22,7 +22,7 @@ built, not committed:
 
 ```sh
 npm run build:desktop       # generate, fonts, wallpapers
-npm run check:desktop       # part of npm run gates: refuses a generated file that drifted
+npm run check:desktop       # refuses a generated file that drifted (one of the gates)
 ```
 
 ## Which script, when

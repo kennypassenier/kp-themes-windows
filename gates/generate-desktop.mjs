@@ -1390,13 +1390,13 @@ export function render() {
     out.set(
         'shared/themes.json',
         `${JSON.stringify(
-            all.map((d) => ({ name: d.name, label: d.label, dark: d.dark })),
+            all.map((/** @type {Desk} */ d) => ({ name: d.name, label: d.label, dark: d.dark })),
             null,
             4,
         )}\n`,
     );
     // The same list for the shell scripts, which should not need jq: name, label, dark|light.
-    out.set('shared/themes.tsv', all.map((d) => `${d.name}\t${d.label}\t${d.dark ? 'dark' : 'light'}\n`).join(''));
+    out.set('shared/themes.tsv', all.map((/** @type {Desk} */ d) => `${d.name}\t${d.label}\t${d.dark ? 'dark' : 'light'}\n`).join(''));
     return out;
 }
 
