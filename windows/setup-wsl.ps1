@@ -9,11 +9,12 @@
                - ..\linux\wsl\bootstrap-arch.sh as root: pacman, Chaotic-AUR, paru, the
                  CLI tools, your user (asks for a Linux password), /etc/wsl.conf
                - ..\linux\wsl\clone-kp-themes.sh as you: clones kp-themes into
-                 ~/Projects/kp-themes, checks out the work in ..\kp-themes.bundle if
-                 there is one, and runs desktop/linux/install.sh (fish, Starship, fonts)
-               then install.ps1 -FromWsl builds the Windows kit from that clone,
-               installs it in ~\.config\kp-themes and applies the theme, with Arch as
-               the default tab in Windows Terminal.
+                 ~/Projects/kp-themes (plus the branches in -Bundle, a git bundle, if
+                 given) and runs desktop/linux/install.sh (fish, Starship, fonts, the
+                 wallpapers built)
+               then applies the theme from that clone, with Arch as the default tab in
+               Windows Terminal. From then on the clone is the only copy: the files to
+               double-click are in its desktop\windows\launchers\.
 
     Safe to run again: every step checks before it changes anything.
 
@@ -26,8 +27,10 @@
 param(
     [string]$User = $env:USERNAME.ToLower(),
     [string]$Distro = 'archlinux',
-    # The theme for the shell and the kit; the last one applied when left out.
+    # The theme to apply; the last one applied when left out.
     [string]$Theme = '',
+    # A git bundle with work that is not on GitHub yet, fetched into the clone.
+    [string]$Bundle = '',
     [switch]$Pause
 )
 
@@ -35,12 +38,12 @@ param(
 # turn into a terminating error. Each step below checks $LASTEXITCODE instead.
 $ErrorActionPreference = 'Continue'
 $Here = $PSScriptRoot
-# Beside windows\ in the repo (desktop\) and in the kit (~\.config\kp-themes\).
+# desktop\windows\ beside desktop\linux\, in a copy of the repo on this disk.
 $Base = Split-Path $Here -Parent
 $LinuxWsl = Join-Path $Base 'linux\wsl'
-$Bundle = Join-Path $Base 'kp-themes.bundle'
+$State = Join-Path $env:LOCALAPPDATA 'kp-themes'
 if (-not $Theme) {
-    $current = Join-Path $HOME '.config\kp-themes\current.txt'
+    $current = Join-Path $State 'current.txt'
     $Theme = if (Test-Path $current) { (Get-Content $current -Raw).Trim() } else { 'synthwave' }
 }
 
@@ -58,9 +61,9 @@ function Get-Distros {
     return @(& wsl.exe --list --quiet 2>$null | ForEach-Object { ($_ -replace "`0", '').Trim() } | Where-Object { $_ })
 }
 
-# Everything this window shows also goes to logs\setup-wsl-<time>.log beside the kit,
+# Everything this window shows also goes to %LOCALAPPDATA%\kp-themes\logs,
 # and the Linux scripts write theirs there too, so a failed run can be read afterwards.
-$Logs = Join-Path $Base 'logs'
+$Logs = Join-Path $State 'logs'
 New-Item -ItemType Directory -Path $Logs -Force | Out-Null
 $env:KP_LOG_DIR = $Logs
 # WSLENV hands KP_LOG_DIR to Linux as a Linux path (/p).
@@ -110,15 +113,17 @@ try {
     # 5. The user half: ~/Projects/kp-themes and its Linux install.
     Say 'Cloning kp-themes into ~/Projects and setting up the shell.'
     # PowerShell 5 drops an empty argument, so 'none' stands for no bundle.
-    $bundleArg = if (Test-Path $Bundle) { $Bundle } else { 'none' }
+    $bundleArg = if ($Bundle -and (Test-Path $Bundle)) { $Bundle } else { 'none' }
     # -e, not --: -- hands the line to the login shell (fish), which chokes on a Windows path.
     & wsl.exe -d $Distro -u $User --cd $LinuxWsl -e bash ./clone-kp-themes.sh $bundleArg $Theme
     if ($LASTEXITCODE -ne 0) { throw "clone-kp-themes.sh failed (exit $LASTEXITCODE); scroll up for the error." }
 
-    # 6. The Windows kit, built from that clone, and the theme on the whole desktop.
-    & (Join-Path $Here 'install.ps1') -FromWsl -Distro $Distro -Theme $Theme
+    # 6. The theme on the whole desktop, from the clone.
+    $linuxHome = ((& wsl.exe -d $Distro -u $User -e sh -c 'echo $HOME') -join '').Trim()
+    $clone = "\\wsl.localhost\$Distro" + ($linuxHome -replace '/', '\') + '\Projects\kp-themes'
+    & (Join-Path $clone 'desktop\windows\apply.ps1') -Theme $Theme
 
-    Say "Done. Your projects live in \\wsl.localhost\$Distro\home\$User\Projects; open Windows Terminal for Arch in fish." 'Cyan'
+    Say "Done. The repo is $clone; double-click a theme in desktop\windows\launchers\Themes." 'Cyan'
 
     # What WSL says about itself, for the log.
     Say ((& wsl.exe --list --verbose 2>&1 | ForEach-Object { ($_ -replace "`0", '').TrimEnd() } | Where-Object { $_ }) -join ' | ') 'DarkGray'

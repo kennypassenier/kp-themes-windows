@@ -57,12 +57,30 @@ param(
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version 2
 
-# The same layout in the repo (desktop\) and in the installed kit
-# (~\.config\kp-themes\): windows\ beside shared\.
+# desktop\windows\ beside desktop\shared\, in the repo.
 $Root = $PSScriptRoot
 $Shared = Join-Path (Split-Path $Root -Parent) 'shared'
 $Stamp = Get-Date -Format 'yyyyMMdd-HHmmss'
 $Utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+# This PC's state: the theme applied last, the prompt config PowerShell loads at
+# every start, logs, and the local run copy below.
+$State = Join-Path $env:LOCALAPPDATA 'kp-themes'
+
+# Started from the clone in WSL (\\wsl.localhost\...): run from a local copy of
+# desktop\windows and desktop\shared instead. The administrator half of a switch
+# (Windhawk, the lock screen) then never depends on WSL being reachable from an
+# elevated process, and the copy is refreshed on every switch (only what changed).
+if ($PSScriptRoot -like '\\*') {
+    $run = Join-Path $State 'run'
+    Write-Host "  copying desktop\ from WSL to $run (the first time takes a moment)" -ForegroundColor DarkGray
+    foreach ($part in 'windows', 'shared') {
+        $roboArgs = @((Join-Path (Split-Path $Root -Parent) $part), (Join-Path $run $part), '/MIR', '/NFL', '/NDL', '/NJH', '/NJS', '/NP', '/R:1', '/W:1', '/XD', 'launchers')
+        & robocopy.exe @roboArgs | Out-Null
+        if ($LASTEXITCODE -ge 8) { throw "copying $part from WSL failed (robocopy $LASTEXITCODE)" }
+    }
+    & (Join-Path $run 'windows\apply.ps1') @PSBoundParameters
+    exit
+}
 
 # Windows PowerShell 5 hands a JSON array down the pipeline as one object, so
 # enumerate it by hand; PowerShell 7 would unroll it either way.
@@ -222,9 +240,8 @@ Write-Host "  kp-themes -> Windows: KP $($Meta.label) ($Theme)" -ForegroundColor
 # The choice is recorded first, so a window closed halfway (at the FireDragon
 # question, say) still leaves the theme you picked as the one to come back to.
 if (-not $DryRun) {
-    $state = Join-Path $HOME '.config\kp-themes'
-    New-Item -ItemType Directory -Path $state -Force | Out-Null
-    Set-Content -Path (Join-Path $state 'current.txt') -Value $Theme -Encoding ASCII
+    New-Item -ItemType Directory -Path $State -Force | Out-Null
+    Set-Content -Path (Join-Path $State 'current.txt') -Value $Theme -Encoding ASCII
 }
 if ($DryRun) { Write-Host '  dry run: nothing is written' -ForegroundColor Yellow }
 Write-Host ''
@@ -347,26 +364,26 @@ if (Step 'prompt') {
     } elseif ($DryRun) {
         Say 'prompt' 'would write the prompt config and the profile line'
     } else {
-        $state = Join-Path $HOME '.config\kp-themes'
-        New-Item -ItemType Directory -Path $state -Force | Out-Null
-        Copy-Item $omp (Join-Path $state 'prompt.omp.json') -Force
+        New-Item -ItemType Directory -Path $State -Force | Out-Null
+        Copy-Item $omp (Join-Path $State 'prompt.omp.json') -Force
         # Documents may be redirected (OneDrive); ask Windows where it is.
         $docs = [Environment]::GetFolderPath('MyDocuments')
         if (-not $docs) { $docs = Join-Path $HOME 'Documents' }
         $block = @(
             '# kp-themes: prompt (begin) - the prompt of the active kp-theme; delete this block to undo',
             'if (Get-Command oh-my-posh -ErrorAction SilentlyContinue) {',
-            '    oh-my-posh init pwsh --config "$HOME\.config\kp-themes\prompt.omp.json" | Invoke-Expression',
+            '    oh-my-posh init pwsh --config "$env:LOCALAPPDATA\kp-themes\prompt.omp.json" | Invoke-Expression',
             '}',
             '# kp-themes: prompt (end)'
         ) -join "`r`n"
         foreach ($folder in 'PowerShell', 'WindowsPowerShell') {
             $profilePath = Join-Path $docs "$folder\Microsoft.PowerShell_profile.ps1"
             [string]$text = if (Test-Path $profilePath) { Get-Content $profilePath -Raw } else { '' }
-            if ($text -notmatch 'kp-themes: prompt \(begin\)') {
-                Backup $profilePath | Out-Null
-                Write-Text $profilePath (($text.TrimEnd() + "`r`n`r`n" + $block + "`r`n").TrimStart())
-            }
+            # The block is replaced on every run, so a moved config path arrives too.
+            if ($text -notmatch 'kp-themes: prompt \(begin\)') { Backup $profilePath | Out-Null }
+            $rest = [regex]::Replace($text, '(?s)# kp-themes: prompt \(begin\).*?# kp-themes: prompt \(end\)\r?\n?', '').TrimEnd()
+            $new = (($rest + "`r`n`r`n" + $block + "`r`n").TrimStart())
+            if ($new -ne $text) { Write-Text $profilePath $new }
         }
         Say 'prompt' "Oh My Posh prompt in KP $($Meta.label)'s colours; open a new tab to see it"
     }

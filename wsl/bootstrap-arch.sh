@@ -11,7 +11,7 @@
 # Safe to run again: steps check before they change anything.
 set -euo pipefail
 
-# setup-wsl.ps1 hands over KP_LOG_DIR (the kit's logs folder): keep a copy of everything.
+# setup-wsl.ps1 hands over KP_LOG_DIR (%LOCALAPPDATA%\kp-themes\logs): keep a copy of everything.
 if [ -n "${KP_LOG_DIR:-}" ] && mkdir -p "$KP_LOG_DIR" 2>/dev/null; then
     exec > >(tee -a "$KP_LOG_DIR/bootstrap-arch-$(date +%Y%m%d-%H%M%S).log") 2>&1
 fi

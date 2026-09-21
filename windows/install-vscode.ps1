@@ -59,9 +59,9 @@ Write-Host ''
 Write-Host '  kp-themes: VS Code' -ForegroundColor Cyan
 Write-Host ''
 
-# ..\vscode in the installed kit, ..\..\vscode in the repo (desktop\windows\).
-$vsSource = @((Join-Path (Split-Path $Root -Parent) 'vscode'), (Join-Path (Split-Path (Split-Path $Root -Parent) -Parent) 'vscode')) |
-    Where-Object { Test-Path (Join-Path $_ 'kp-*-color-theme.json') } | Select-Object -First 1
+# The repo's vscode\, two folders up from desktop\windows\.
+$vsSource = Join-Path (Split-Path (Split-Path $Root -Parent) -Parent) 'vscode'
+if (-not (Test-Path (Join-Path $vsSource 'kp-*-color-theme.json'))) { $vsSource = $null }
 $cli = @(
     (Get-Command 'code.cmd' -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty Source),
     (Join-Path $env:LOCALAPPDATA 'Programs\Microsoft VS Code\bin\code.cmd'),
@@ -69,14 +69,14 @@ $cli = @(
 ) | Where-Object { $_ -and (Test-Path $_) } | Select-Object -First 1
 
 if (-not $cli) { Say 'vscode' 'VS Code not found, skipped' 'DarkGray' }
-elseif (-not $vsSource) { Say 'vscode' 'no vscode\kp-*-color-theme.json found (kit or repo), skipped' 'DarkGray' }
+elseif (-not $vsSource) { Say 'vscode' 'no vscode\kp-*-color-theme.json in the repo, skipped' 'DarkGray' }
 else {
     $files = @(Get-ChildItem $vsSource -Filter 'kp-*-color-theme.json' | Sort-Object Name)
     $sha = [Security.Cryptography.SHA256]::Create()
     $bytes = New-Object System.Collections.Generic.List[byte]
     foreach ($f in $files) { $bytes.AddRange([IO.File]::ReadAllBytes($f.FullName)) }
     $hash = -join ($sha.ComputeHash($bytes.ToArray())[0..7] | ForEach-Object { $_.ToString('x2') })
-    $marker = Join-Path $Root '.vscode-installed'
+    $marker = Join-Path $env:LOCALAPPDATA 'kp-themes\vscode-installed'
     $installed = if (Test-Path $marker) { (Get-Content $marker -Raw).Trim() } else { '' }
 
     # The copy an older apply.ps1 put straight into the extensions folder.
