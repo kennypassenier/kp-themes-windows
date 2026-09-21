@@ -78,6 +78,14 @@ if ($FromWsl) {
         # wsl.exe hands back text with carriage returns; the home is /home/<user>.
         $linuxHome = ((& wsl.exe -d $Distro -e sh -c 'echo $HOME') -join '').Trim()
         if ($LASTEXITCODE -ne 0 -or -not $linuxHome) { throw "WSL distro '$Distro' is not there; run Tools\Setup WSL (Arch).cmd first." }
+        # Work that is not on GitHub yet travels as kp-themes.bundle beside the kit;
+        # bring the clone up to it first (fast-forward only, never over your own commits).
+        $bundle = Join-Path $Kit 'kp-themes.bundle'
+        if (Test-Path $bundle) {
+            $b = ((& wsl.exe -d $Distro -e wslpath -u $bundle) -join '').Trim()
+            & wsl.exe -d $Distro -e git -C "$linuxHome/Projects/kp-themes" pull --ff-only --quiet $b desktop
+            if ($LASTEXITCODE -eq 0) { Say 'repo' 'clone brought up to kp-themes.bundle' } else { Say 'repo' 'the clone did not fast-forward to the bundle; building what it has' 'Yellow' }
+        }
         Say 'build' "fonts and wallpapers in ${Distro}:~/Projects/kp-themes (a minute)"
         & wsl.exe -d $Distro -e bash -c 'cd ~/Projects/kp-themes && bash desktop/linux/install.sh --build-only'
         if ($LASTEXITCODE -ne 0) { throw "the build in WSL failed (exit $LASTEXITCODE); scroll up for the error." }
