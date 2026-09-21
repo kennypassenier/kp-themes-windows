@@ -219,6 +219,13 @@ function Send-SettingChange([string]$area) {
 
 Write-Host ''
 Write-Host "  kp-themes -> Windows: KP $($Meta.label) ($Theme)" -ForegroundColor Cyan
+# The choice is recorded first, so a window closed halfway (at the FireDragon
+# question, say) still leaves the theme you picked as the one to come back to.
+if (-not $DryRun) {
+    $state = Join-Path $HOME '.config\kp-themes'
+    New-Item -ItemType Directory -Path $state -Force | Out-Null
+    Set-Content -Path (Join-Path $state 'current.txt') -Value $Theme -Encoding ASCII
+}
 if ($DryRun) { Write-Host '  dry run: nothing is written' -ForegroundColor Yellow }
 Write-Host ''
 
@@ -517,7 +524,7 @@ if (Step 'wsl') {
         $star = (Join-Path $SharedDir 'starship.toml') -replace '\\', '/'
         $fish = (Join-Path $SharedDir 'kp-colors.fish') -replace '\\', '/'
         # PowerShell 5 mangles quotes in native arguments, so the script travels as base64.
-        $sh = "set -e`nmkdir -p ~/.config/fish/conf.d`ncp `"`$(wslpath -u '$star')`" ~/.config/starship.toml`ncp `"`$(wslpath -u '$fish')`" ~/.config/fish/conf.d/kp-colors.fish`n"
+        $sh = "set -e`nmkdir -p ~/.config/fish/conf.d`ncp `"`$(wslpath -u '$star')`" ~/.config/starship.toml`ncp `"`$(wslpath -u '$fish')`" ~/.config/fish/conf.d/kp-colors.fish`nmkdir -p ~/.config/kp-themes`necho $Theme > ~/.config/kp-themes/current`n"
         $b64 = [Convert]::ToBase64String($Utf8NoBom.GetBytes($sh))
         if (-not $DryRun) {
             $r = Invoke-Native 'wsl.exe' @('-d', $WslDistro, '-e', 'sh', '-c', "echo $b64 | base64 -d | sh")
@@ -537,11 +544,6 @@ if (-not $DryRun -and -not $NoRestart) {
     Say 'shell' 'Explorer, start menu and notification centre restarted'
 }
 
-if (-not $DryRun) {
-    $state = Join-Path $HOME '.config\kp-themes'
-    New-Item -ItemType Directory -Path $state -Force | Out-Null
-    Set-Content -Path (Join-Path $state 'current.txt') -Value $Theme -Encoding ASCII
-}
 
 Write-Host ''
 Write-Host "  Done: KP $($Meta.label). Backups end in .kp-backup-$Stamp" -ForegroundColor Cyan

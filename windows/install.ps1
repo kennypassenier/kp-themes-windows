@@ -117,7 +117,9 @@ foreach ($name in 'fonts', 'windhawk', 'windhawk-cyberpunk', 'install-fonts.ps1'
 }
 
 # --- The right-click menu, once ---------------------------------------------------------
-$classic = Test-Path 'HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32'
+# Set means: the key is there and its default value is the empty string.
+$menuKey = Get-Item 'HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32' -ErrorAction SilentlyContinue
+$classic = $menuKey -and ($null -ne $menuKey.GetValue('', $null))
 if ($ContextMenu -eq 'Classic' -and -not $classic) {
     # apply.ps1 restarts Explorer at the end, which makes it show.
     & (Join-Path $Kit 'windows\context-menu.ps1') -Style Classic -NoRestart:(-not $NoApply) | Out-Null

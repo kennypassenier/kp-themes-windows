@@ -27,9 +27,14 @@ $ErrorActionPreference = 'Stop'
 $key = 'HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}'
 
 if ($Style -eq 'Classic') {
-    # The default value must exist and be empty; "no value" does not count.
-    New-Item -Path "$key\InprocServer32" -Force | Out-Null
-    Set-ItemProperty -Path "$key\InprocServer32" -Name '(default)' -Value ''
+    # The default value must exist and be an empty string; a key whose default is
+    # "(value not set)" does nothing. reg.exe add /ve (no /d) is the one way that is
+    # sure to write the empty string.
+    $ErrorActionPreference = 'Continue'
+    & reg.exe add 'HKCU\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32' /ve /f *> $null
+    $ErrorActionPreference = 'Stop'
+    $value = (Get-Item "$key\InprocServer32").GetValue('', $null)
+    if ($null -eq $value) { throw 'the empty default value did not stick; run this again as administrator' }
     $done = 'Windows 10 style: the full menu at once'
 } else {
     if (Test-Path $key) { Remove-Item -Path $key -Recurse -Force }
