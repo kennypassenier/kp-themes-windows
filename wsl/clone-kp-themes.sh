@@ -2,7 +2,7 @@
 # Clones kp-themes into ~/Projects inside WSL, as the user, and runs its Linux
 # install. Called by desktop/windows/setup-wsl.ps1 after bootstrap-arch.sh:
 #
-#   wsl -d archlinux -u <user> --cd <this folder> -- bash ./clone-kp-themes.sh [bundle] [theme]
+#   wsl -d archlinux -u <user> --cd <this folder> -e bash ./clone-kp-themes.sh [bundle] [theme]
 #
 # bundle: "none", or a git bundle with work that is not on GitHub yet (a branch), fetched
 # into the clone and checked out. Push it from there with `gh auth login` and

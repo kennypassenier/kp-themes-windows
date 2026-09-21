@@ -101,7 +101,7 @@ try {
 
     # 3. The root half, with its own folder as the working directory.
     Say 'Bootstrapping (pacman, Chaotic-AUR, paru, the CLI tools). This takes a few minutes.'
-    & wsl.exe -d $Distro -u root --cd $LinuxWsl -- bash ./bootstrap-arch.sh $User
+    & wsl.exe -d $Distro -u root --cd $LinuxWsl -e bash ./bootstrap-arch.sh $User
     if ($LASTEXITCODE -ne 0) { throw "bootstrap-arch.sh failed (exit $LASTEXITCODE); scroll up for the pacman error, fix it, and run this script again." }
 
     # 4. Restart so /etc/wsl.conf (systemd, default user) takes effect.
@@ -111,7 +111,8 @@ try {
     Say 'Cloning kp-themes into ~/Projects and setting up the shell.'
     # PowerShell 5 drops an empty argument, so 'none' stands for no bundle.
     $bundleArg = if (Test-Path $Bundle) { $Bundle } else { 'none' }
-    & wsl.exe -d $Distro -u $User --cd $LinuxWsl -- bash ./clone-kp-themes.sh $bundleArg $Theme
+    # -e, not --: -- hands the line to the login shell (fish), which chokes on a Windows path.
+    & wsl.exe -d $Distro -u $User --cd $LinuxWsl -e bash ./clone-kp-themes.sh $bundleArg $Theme
     if ($LASTEXITCODE -ne 0) { throw "clone-kp-themes.sh failed (exit $LASTEXITCODE); scroll up for the error." }
 
     # 6. The Windows kit, built from that clone, and the theme on the whole desktop.

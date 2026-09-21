@@ -4,7 +4,7 @@
 # install ships, the user, and /etc/wsl.conf. Run as root, once, by
 # desktop/windows/setup-wsl.ps1:
 #
-#   wsl -d archlinux -u root --cd <this folder> -- bash ./bootstrap-arch.sh <user>
+#   wsl -d archlinux -u root --cd <this folder> -e bash ./bootstrap-arch.sh <user>
 #
 # The user half (fish config, fonts, the theme) is desktop/linux/install.sh,
 # which setup-wsl.ps1 runs from the clone in ~/Projects/kp-themes afterwards.
