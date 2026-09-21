@@ -20,14 +20,18 @@ const names = wanted.length > 0 ? wanted : all;
 const browser = await chromium.launch(process.env.KP_CHROMIUM ? { executablePath: process.env.KP_CHROMIUM } : {});
 const page = await browser.newPage({ viewport: { width: 3840, height: 2160 } });
 for (const name of names) {
-    const svg = new URL(`${name}/wallpaper.svg`, OUT);
-    if (!existsSync(svg)) {
-        console.error(`${name}: no wallpaper.svg; run \`npm run generate:windows\` first.`);
-        process.exitCode = 1;
-        continue;
+    // Two pictures per theme: the desktop, and the calmer one the lock and
+    // sign-in screens draw their clock on.
+    for (const kind of ['wallpaper', 'wallpaper-lock']) {
+        const svg = new URL(`${name}/${kind}.svg`, OUT);
+        if (!existsSync(svg)) {
+            console.error(`${name}: no ${kind}.svg; run \`npm run generate:windows\` first.`);
+            process.exitCode = 1;
+            continue;
+        }
+        await page.goto(pathToFileURL(svg.pathname).href);
+        await page.screenshot({ path: new URL(`${name}/${kind}.png`, OUT).pathname });
+        console.log(`wrote windows/${name}/${kind}.png`);
     }
-    await page.goto(pathToFileURL(svg.pathname).href);
-    await page.screenshot({ path: new URL(`${name}/wallpaper.png`, OUT).pathname });
-    console.log(`wrote windows/${name}/wallpaper.png`);
 }
 await browser.close();
