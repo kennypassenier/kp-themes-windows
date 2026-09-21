@@ -1,0 +1,112 @@
+[
+    {
+        "name": "formal",
+        "label": "Formal",
+        "dark": false
+    },
+    {
+        "name": "light",
+        "label": "Light",
+        "dark": false
+    },
+    {
+        "name": "dark",
+        "label": "Dark",
+        "dark": true
+    },
+    {
+        "name": "cyberpunk",
+        "label": "Cyberpunk",
+        "dark": true
+    },
+    {
+        "name": "synthwave",
+        "label": "Synthwave",
+        "dark": true
+    },
+    {
+        "name": "pastel",
+        "label": "Pastel",
+        "dark": false
+    },
+    {
+        "name": "terminal",
+        "label": "Terminal",
+        "dark": true
+    },
+    {
+        "name": "forest",
+        "label": "Forest",
+        "dark": false
+    },
+    {
+        "name": "high-contrast",
+        "label": "High contrast",
+        "dark": false
+    },
+    {
+        "name": "sepia",
+        "label": "Sepia",
+        "dark": false
+    },
+    {
+        "name": "blueprint",
+        "label": "Blueprint",
+        "dark": true
+    },
+    {
+        "name": "solstice",
+        "label": "Solstice",
+        "dark": true
+    },
+    {
+        "name": "brutalism",
+        "label": "Brutalism",
+        "dark": false
+    },
+    {
+        "name": "deco",
+        "label": "Art Deco",
+        "dark": true
+    },
+    {
+        "name": "phantom",
+        "label": "Phantom",
+        "dark": true
+    },
+    {
+        "name": "shade-light",
+        "label": "Shade (light)",
+        "dark": false
+    },
+    {
+        "name": "shade-dark",
+        "label": "Shade (dark)",
+        "dark": true
+    },
+    {
+        "name": "retro",
+        "label": "Retro",
+        "dark": false
+    },
+    {
+        "name": "grotesk",
+        "label": "Grotesk",
+        "dark": false
+    },
+    {
+        "name": "lapis",
+        "label": "Lapis",
+        "dark": true
+    },
+    {
+        "name": "nostromo",
+        "label": "Nostromo",
+        "dark": false
+    },
+    {
+        "name": "titanium",
+        "label": "Titanium",
+        "dark": true
+    }
+]

@@ -1,0 +1,46 @@
+{
+    "$generated": "kp-themes 7.1.0 (gates/generate-desktop.mjs). Do not edit.",
+    "scheme": {
+        "name": "KP Nostromo",
+        "background": "#D7CBB7",
+        "foreground": "#2B2522",
+        "cursorColor": "#312A26",
+        "selectionBackground": "#A59A8B",
+        "black": "#2B2522",
+        "brightBlack": "#544D45",
+        "red": "#8E0B0B",
+        "brightRed": "#5E0808",
+        "green": "#2D5876",
+        "brightGreen": "#1F3C51",
+        "yellow": "#81210E",
+        "brightYellow": "#531509",
+        "blue": "#2D5876",
+        "brightBlue": "#1F3C51",
+        "purple": "#8E0B0B",
+        "brightPurple": "#5E0808",
+        "cyan": "#2D5876",
+        "brightCyan": "#1F3C51",
+        "white": "#544D45",
+        "brightWhite": "#786B5E"
+    },
+    "theme": {
+        "name": "KP Nostromo",
+        "tab": {
+            "background": "#D7CBB7FF",
+            "unfocusedBackground": "#2B2522FF",
+            "showCloseButton": "hover",
+            "iconStyle": "default"
+        },
+        "tabRow": {
+            "background": "#2B2522FF",
+            "unfocusedBackground": "#2B2522FF"
+        },
+        "window": {
+            "applicationTheme": "light",
+            "useMica": false,
+            "rainbowFrame": false,
+            "frame": "#312A26FF",
+            "unfocusedFrame": "#B0A38DFF"
+        }
+    }
+}

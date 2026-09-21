@@ -1,0 +1,46 @@
+{
+    "$generated": "kp-themes 7.1.0 (gates/generate-desktop.mjs). Do not edit.",
+    "scheme": {
+        "name": "KP Grotesk",
+        "background": "#FFFFFF",
+        "foreground": "#121212",
+        "cursorColor": "#E00618",
+        "selectionBackground": "#F6B4B9",
+        "black": "#121212",
+        "brightBlack": "#666666",
+        "red": "#990000",
+        "brightRed": "#660000",
+        "green": "#17825E",
+        "brightGreen": "#0F573F",
+        "yellow": "#990000",
+        "brightYellow": "#660000",
+        "blue": "#1F4EAD",
+        "brightBlue": "#173B82",
+        "purple": "#E00618",
+        "brightPurple": "#AE0413",
+        "cyan": "#17825E",
+        "brightCyan": "#0F573F",
+        "white": "#666666",
+        "brightWhite": "#121212"
+    },
+    "theme": {
+        "name": "KP Grotesk",
+        "tab": {
+            "background": "#FFFFFFFF",
+            "unfocusedBackground": "#121212FF",
+            "showCloseButton": "hover",
+            "iconStyle": "default"
+        },
+        "tabRow": {
+            "background": "#121212FF",
+            "unfocusedBackground": "#121212FF"
+        },
+        "window": {
+            "applicationTheme": "light",
+            "useMica": false,
+            "rainbowFrame": false,
+            "frame": "#E00618FF",
+            "unfocusedFrame": "#D9D9D9FF"
+        }
+    }
+}

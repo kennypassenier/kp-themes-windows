@@ -1,0 +1,46 @@
+{
+    "$generated": "kp-themes 7.1.0 (gates/generate-desktop.mjs). Do not edit.",
+    "scheme": {
+        "name": "KP Solstice",
+        "background": "#1D1816",
+        "foreground": "#EDE7DE",
+        "cursorColor": "#EF8E39",
+        "selectionBackground": "#5C3C21",
+        "black": "#39312D",
+        "brightBlack": "#C0B3A5",
+        "red": "#DB5757",
+        "brightRed": "#E48181",
+        "green": "#7CB654",
+        "brightGreen": "#98C577",
+        "yellow": "#DDB43C",
+        "brightYellow": "#E4C567",
+        "blue": "#DFEFF6",
+        "brightBlue": "#EFF7FA",
+        "purple": "#C577AB",
+        "brightPurple": "#D49BC1",
+        "cyan": "#DFEFF6",
+        "brightCyan": "#EFF7FA",
+        "white": "#EDE7DE",
+        "brightWhite": "#F8F5F2"
+    },
+    "theme": {
+        "name": "KP Solstice",
+        "tab": {
+            "background": "#1D1816FF",
+            "unfocusedBackground": "#181311FF",
+            "showCloseButton": "hover",
+            "iconStyle": "default"
+        },
+        "tabRow": {
+            "background": "#181311FF",
+            "unfocusedBackground": "#181311FF"
+        },
+        "window": {
+            "applicationTheme": "dark",
+            "useMica": false,
+            "rainbowFrame": false,
+            "frame": "#EF8E39FF",
+            "unfocusedFrame": "#463B35FF"
+        }
+    }
+}

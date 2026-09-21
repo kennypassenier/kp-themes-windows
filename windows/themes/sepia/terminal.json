@@ -1,0 +1,46 @@
+{
+    "$generated": "kp-themes 7.1.0 (gates/generate-desktop.mjs). Do not edit.",
+    "scheme": {
+        "name": "KP Sepia",
+        "background": "#F6F1E9",
+        "foreground": "#3B2816",
+        "cursorColor": "#7E4925",
+        "selectionBackground": "#D2BEAE",
+        "black": "#3B2816",
+        "brightBlack": "#705A48",
+        "red": "#9B3227",
+        "brightRed": "#72251D",
+        "green": "#2E4F17",
+        "brightGreen": "#17280B",
+        "yellow": "#7B460A",
+        "brightYellow": "#4B2B06",
+        "blue": "#1B496A",
+        "brightBlue": "#102D41",
+        "purple": "#8A425A",
+        "brightPurple": "#673244",
+        "cyan": "#346279",
+        "brightCyan": "#254556",
+        "white": "#705A48",
+        "brightWhite": "#A0856A"
+    },
+    "theme": {
+        "name": "KP Sepia",
+        "tab": {
+            "background": "#F6F1E9FF",
+            "unfocusedBackground": "#F1EADFFF",
+            "showCloseButton": "hover",
+            "iconStyle": "default"
+        },
+        "tabRow": {
+            "background": "#F1EADFFF",
+            "unfocusedBackground": "#F1EADFFF"
+        },
+        "window": {
+            "applicationTheme": "light",
+            "useMica": false,
+            "rainbowFrame": false,
+            "frame": "#7E4925FF",
+            "unfocusedFrame": "#DED5C9FF"
+        }
+    }
+}

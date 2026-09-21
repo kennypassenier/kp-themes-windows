@@ -1,0 +1,46 @@
+{
+    "$generated": "kp-themes 7.1.0 (gates/generate-desktop.mjs). Do not edit.",
+    "scheme": {
+        "name": "KP Art Deco",
+        "background": "#0F161A",
+        "foreground": "#F3E8CE",
+        "cursorColor": "#D4A735",
+        "selectionBackground": "#4A4222",
+        "black": "#1F292D",
+        "brightBlack": "#CDC0A2",
+        "red": "#EA3E4C",
+        "brightRed": "#EF6C77",
+        "green": "#D9F2E6",
+        "brightGreen": "#F0FAF5",
+        "yellow": "#D7AD42",
+        "brightYellow": "#E0BF6C",
+        "blue": "#5299E0",
+        "brightBlue": "#7DB3E8",
+        "purple": "#E64C59",
+        "brightPurple": "#EC7983",
+        "cyan": "#34B292",
+        "brightCyan": "#4DCBAC",
+        "white": "#F3E8CE",
+        "brightWhite": "#FBF7EF"
+    },
+    "theme": {
+        "name": "KP Art Deco",
+        "tab": {
+            "background": "#0F161AFF",
+            "unfocusedBackground": "#0B1114FF",
+            "showCloseButton": "hover",
+            "iconStyle": "default"
+        },
+        "tabRow": {
+            "background": "#0B1114FF",
+            "unfocusedBackground": "#0B1114FF"
+        },
+        "window": {
+            "applicationTheme": "dark",
+            "useMica": false,
+            "rainbowFrame": false,
+            "frame": "#D4A735FF",
+            "unfocusedFrame": "#2A363CFF"
+        }
+    }
+}

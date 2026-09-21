@@ -1,0 +1,46 @@
+{
+    "$generated": "kp-themes 7.1.0 (gates/generate-desktop.mjs). Do not edit.",
+    "scheme": {
+        "name": "KP Forest",
+        "background": "#F6F4EE",
+        "foreground": "#1A2E27",
+        "cursorColor": "#235744",
+        "selectionBackground": "#B6C5BB",
+        "black": "#1A2E27",
+        "brightBlack": "#4C615A",
+        "red": "#A53827",
+        "brightRed": "#7C2A1D",
+        "green": "#206F47",
+        "brightGreen": "#15472E",
+        "yellow": "#864F18",
+        "brightYellow": "#5B3610",
+        "blue": "#216283",
+        "brightBlue": "#16435A",
+        "purple": "#A53827",
+        "brightPurple": "#7C2A1D",
+        "cyan": "#216283",
+        "brightCyan": "#16435A",
+        "white": "#4C615A",
+        "brightWhite": "#609080"
+    },
+    "theme": {
+        "name": "KP Forest",
+        "tab": {
+            "background": "#F6F4EEFF",
+            "unfocusedBackground": "#172B24FF",
+            "showCloseButton": "hover",
+            "iconStyle": "default"
+        },
+        "tabRow": {
+            "background": "#172B24FF",
+            "unfocusedBackground": "#172B24FF"
+        },
+        "window": {
+            "applicationTheme": "light",
+            "useMica": false,
+            "rainbowFrame": false,
+            "frame": "#235744FF",
+            "unfocusedFrame": "#D6D0C2FF"
+        }
+    }
+}

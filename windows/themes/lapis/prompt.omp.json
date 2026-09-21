@@ -1,0 +1,93 @@
+{
+    "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+    "version": 2,
+    "final_space": true,
+    "palette": {
+        "signal": "#D5A52A",
+        "accent": "#E24536",
+        "violet": "#E8D7B0",
+        "ok": "#F2E9D4",
+        "warn": "#F2E9D4",
+        "danger": "#F7796E",
+        "ink": "#F2E9D4",
+        "muted": "#A9AFD1"
+    },
+    "blocks": [
+        {
+            "type": "prompt",
+            "alignment": "left",
+            "segments": [
+                {
+                    "type": "text",
+                    "style": "plain",
+                    "foreground": "p:signal",
+                    "template": "╭─"
+                },
+                {
+                    "type": "os",
+                    "style": "plain",
+                    "foreground": "p:signal",
+                    "template": " {{ .Icon }} "
+                },
+                {
+                    "type": "session",
+                    "style": "plain",
+                    "foreground": "p:accent",
+                    "template": "{{ .UserName }}<p:muted>@</>{{ .HostName }} "
+                },
+                {
+                    "type": "path",
+                    "style": "plain",
+                    "foreground": "p:warn",
+                    "template": " {{ .Path }} ",
+                    "properties": {
+                        "style": "agnoster_short",
+                        "max_depth": 4,
+                        "folder_separator_icon": "  "
+                    }
+                },
+                {
+                    "type": "git",
+                    "style": "plain",
+                    "foreground": "p:violet",
+                    "template": "{{ .HEAD }}{{ if .Working.Changed }} *{{ end }} "
+                },
+                {
+                    "type": "executiontime",
+                    "style": "plain",
+                    "foreground": "p:muted",
+                    "template": " {{ .FormattedMs }} ",
+                    "properties": {
+                        "threshold": 500,
+                        "style": "austin"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "prompt",
+            "alignment": "left",
+            "newline": true,
+            "segments": [
+                {
+                    "type": "text",
+                    "style": "plain",
+                    "foreground": "p:signal",
+                    "template": "╰─"
+                },
+                {
+                    "type": "status",
+                    "style": "plain",
+                    "foreground": "p:ok",
+                    "foreground_templates": [
+                        "{{ if gt .Code 0 }}p:danger{{ end }}"
+                    ],
+                    "template": "λ",
+                    "properties": {
+                        "always_enabled": true
+                    }
+                }
+            ]
+        }
+    ]
+}

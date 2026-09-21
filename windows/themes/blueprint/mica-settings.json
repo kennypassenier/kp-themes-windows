@@ -1,0 +1,27 @@
+{
+    "rules": [
+        {
+            "type": "global",
+            "titleBarColor": "Dark",
+            "backdropPreference": "Acrylic",
+            "cornerPreference": "RoundedSmall",
+            "extendFrameIntoClientArea": false
+        },
+        {
+            "type": "process",
+            "processName": "explorer",
+            "titleBarColor": "Dark",
+            "backdropPreference": "Acrylic",
+            "cornerPreference": "RoundedSmall",
+            "extendFrameIntoClientArea": true
+        },
+        {
+            "type": "process",
+            "processName": "notepad",
+            "titleBarColor": "Dark",
+            "backdropPreference": "Acrylic",
+            "cornerPreference": "RoundedSmall",
+            "extendFrameIntoClientArea": true
+        }
+    ]
+}

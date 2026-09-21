@@ -1,0 +1,46 @@
+{
+    "$generated": "kp-themes 7.1.0 (gates/generate-desktop.mjs). Do not edit.",
+    "scheme": {
+        "name": "KP Brutalism",
+        "background": "#FFFCF0",
+        "foreground": "#121212",
+        "cursorColor": "#121212",
+        "selectionBackground": "#B7B5AD",
+        "black": "#121212",
+        "brightBlack": "#474747",
+        "red": "#BD0F0F",
+        "brightRed": "#8E0B0B",
+        "green": "#1D7239",
+        "brightGreen": "#124925",
+        "yellow": "#BD0F0F",
+        "brightYellow": "#8E0B0B",
+        "blue": "#603BCE",
+        "brightBlue": "#4B2BAB",
+        "purple": "#603BCE",
+        "brightPurple": "#4B2BAB",
+        "cyan": "#096AAE",
+        "brightCyan": "#074C7E",
+        "white": "#474747",
+        "brightWhite": "#121212"
+    },
+    "theme": {
+        "name": "KP Brutalism",
+        "tab": {
+            "background": "#FFFCF0FF",
+            "unfocusedBackground": "#121212FF",
+            "showCloseButton": "hover",
+            "iconStyle": "default"
+        },
+        "tabRow": {
+            "background": "#121212FF",
+            "unfocusedBackground": "#121212FF"
+        },
+        "window": {
+            "applicationTheme": "light",
+            "useMica": false,
+            "rainbowFrame": false,
+            "frame": "#121212FF",
+            "unfocusedFrame": "#121212FF"
+        }
+    }
+}

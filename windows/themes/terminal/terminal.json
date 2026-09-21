@@ -1,0 +1,46 @@
+{
+    "$generated": "kp-themes 7.1.0 (gates/generate-desktop.mjs). Do not edit.",
+    "scheme": {
+        "name": "KP Terminal",
+        "background": "#0B0E0B",
+        "foreground": "#68F368",
+        "cursorColor": "#0DF20D",
+        "selectionBackground": "#0C530C",
+        "black": "#171C17",
+        "brightBlack": "#86B686",
+        "red": "#F54747",
+        "brightRed": "#F87777",
+        "green": "#00E000",
+        "brightGreen": "#14FF14",
+        "yellow": "#C9DB00",
+        "brightYellow": "#EBFF0F",
+        "blue": "#47D1D1",
+        "brightBlue": "#70DBDB",
+        "purple": "#F54747",
+        "brightPurple": "#F87777",
+        "cyan": "#47D1D1",
+        "brightCyan": "#70DBDB",
+        "white": "#68F368",
+        "brightWhite": "#97F797"
+    },
+    "theme": {
+        "name": "KP Terminal",
+        "tab": {
+            "background": "#0B0E0BFF",
+            "unfocusedBackground": "#060906FF",
+            "showCloseButton": "hover",
+            "iconStyle": "default"
+        },
+        "tabRow": {
+            "background": "#060906FF",
+            "unfocusedBackground": "#060906FF"
+        },
+        "window": {
+            "applicationTheme": "dark",
+            "useMica": false,
+            "rainbowFrame": false,
+            "frame": "#0DF20DFF",
+            "unfocusedFrame": "#253725FF"
+        }
+    }
+}

@@ -1,0 +1,46 @@
+{
+    "$generated": "kp-themes 7.1.0 (gates/generate-desktop.mjs). Do not edit.",
+    "scheme": {
+        "name": "KP Retro",
+        "background": "#BFBFBF",
+        "foreground": "#1A1A1A",
+        "cursorColor": "#000080",
+        "selectionBackground": "#8585AC",
+        "black": "#1A1A1A",
+        "brightBlack": "#404040",
+        "red": "#800000",
+        "brightRed": "#4D0000",
+        "green": "#000080",
+        "brightGreen": "#00004D",
+        "yellow": "#800000",
+        "brightYellow": "#4D0000",
+        "blue": "#000080",
+        "brightBlue": "#00004D",
+        "purple": "#800080",
+        "brightPurple": "#4D004D",
+        "cyan": "#000080",
+        "brightCyan": "#00004D",
+        "white": "#404040",
+        "brightWhite": "#616161"
+    },
+    "theme": {
+        "name": "KP Retro",
+        "tab": {
+            "background": "#BFBFBFFF",
+            "unfocusedBackground": "#000080FF",
+            "showCloseButton": "hover",
+            "iconStyle": "default"
+        },
+        "tabRow": {
+            "background": "#000080FF",
+            "unfocusedBackground": "#000080FF"
+        },
+        "window": {
+            "applicationTheme": "light",
+            "useMica": false,
+            "rainbowFrame": false,
+            "frame": "#000080FF",
+            "unfocusedFrame": "#808080FF"
+        }
+    }
+}

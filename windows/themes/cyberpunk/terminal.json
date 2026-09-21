@@ -1,0 +1,46 @@
+{
+    "$generated": "kp-themes 7.1.0 (gates/generate-desktop.mjs). Do not edit.",
+    "scheme": {
+        "name": "KP Cyberpunk",
+        "background": "#0A090B",
+        "foreground": "#D7D5CC",
+        "cursorColor": "#FDEC08",
+        "selectionBackground": "#534E0A",
+        "black": "#1D1C21",
+        "brightBlack": "#959283",
+        "red": "#EE3A4F",
+        "brightRed": "#F26979",
+        "green": "#25F48C",
+        "brightGreen": "#55F6A6",
+        "yellow": "#FDEC08",
+        "brightYellow": "#FDF03A",
+        "blue": "#A166FF",
+        "brightBlue": "#C099FF",
+        "purple": "#A166FF",
+        "brightPurple": "#C099FF",
+        "cyan": "#1AF0FF",
+        "brightCyan": "#4DF3FF",
+        "white": "#D7D5CC",
+        "brightWhite": "#EDECE8"
+    },
+    "theme": {
+        "name": "KP Cyberpunk",
+        "tab": {
+            "background": "#0A090BFF",
+            "unfocusedBackground": "#080708FF",
+            "showCloseButton": "hover",
+            "iconStyle": "default"
+        },
+        "tabRow": {
+            "background": "#080708FF",
+            "unfocusedBackground": "#080708FF"
+        },
+        "window": {
+            "applicationTheme": "dark",
+            "useMica": false,
+            "rainbowFrame": false,
+            "frame": "#FDEC08FF",
+            "unfocusedFrame": "#413E10FF"
+        }
+    }
+}
