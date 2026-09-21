@@ -9,6 +9,13 @@
 # `git push -u origin <branch>`.
 set -euo pipefail
 
+# setup-wsl.ps1 hands over KP_LOG_DIR (the kit's logs folder): keep a copy of everything.
+if [ -n "${KP_LOG_DIR:-}" ] && mkdir -p "$KP_LOG_DIR" 2>/dev/null; then
+    exec > >(tee -a "$KP_LOG_DIR/clone-kp-themes-$(date +%Y%m%d-%H%M%S).log") 2>&1
+fi
+# shellcheck disable=SC2154 # rc is set inside the trap
+trap 'rc=$?; echo "clone-kp-themes.sh: stopped at line $LINENO: $BASH_COMMAND (exit $rc)" >&2' ERR
+
 BUNDLE="${1:-}"
 # setup-wsl.ps1 passes a Windows path.
 case "$BUNDLE" in none) BUNDLE="" ;; *:\\*) BUNDLE="$(wslpath -u "$BUNDLE")" ;; esac

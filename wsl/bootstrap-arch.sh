@@ -11,6 +11,13 @@
 # Safe to run again: steps check before they change anything.
 set -euo pipefail
 
+# setup-wsl.ps1 hands over KP_LOG_DIR (the kit's logs folder): keep a copy of everything.
+if [ -n "${KP_LOG_DIR:-}" ] && mkdir -p "$KP_LOG_DIR" 2>/dev/null; then
+    exec > >(tee -a "$KP_LOG_DIR/bootstrap-arch-$(date +%Y%m%d-%H%M%S).log") 2>&1
+fi
+# shellcheck disable=SC2154 # rc is set inside the trap
+trap 'rc=$?; echo "bootstrap-arch.sh: stopped at line $LINENO: $BASH_COMMAND (exit $rc)" >&2' ERR
+
 USERNAME="${1:-kenny}"
 say() { printf '\n\033[1;35m==>\033[0m \033[1m%s\033[0m\n' "$*"; }
 
@@ -40,7 +47,8 @@ echo 'LANG=en_US.UTF-8' >/etc/locale.conf
 
 say "Chaotic-AUR (the repo Garuda builds on)"
 if ! grep -q '^\[chaotic-aur\]' /etc/pacman.conf; then
-    pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
+    pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com ||
+        pacman-key --recv-key 3056513887B78AEB --keyserver hkps://keys.openpgp.org
     pacman-key --lsign-key 3056513887B78AEB
     pacman -U --noconfirm \
         'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' \
@@ -55,7 +63,8 @@ say "user $USERNAME"
 if ! id -u "$USERNAME" >/dev/null 2>&1; then
     useradd -m -G wheel -s /usr/bin/fish "$USERNAME"
     echo "Choose a Linux password for $USERNAME (used by sudo):"
-    passwd "$USERNAME"
+    # Straight to the terminal: the output of this script goes through tee.
+    passwd "$USERNAME" </dev/tty >/dev/tty 2>&1
 else
     usermod -aG wheel -s /usr/bin/fish "$USERNAME"
 fi

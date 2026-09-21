@@ -42,6 +42,14 @@ param(
 $ErrorActionPreference = 'Stop'
 $Kit = Join-Path $HOME '.config\kp-themes'
 
+# An error ends the script, but not before the window has shown it.
+trap {
+    Write-Host ''
+    Write-Host "  Install stopped: $($_.Exception.Message)" -ForegroundColor Red
+    if ($Pause) { Write-Host '  Press a key to close.' -ForegroundColor DarkGray; [void][Console]::ReadKey($true) }
+    break
+}
+
 function Say([string]$step, [string]$text, [string]$colour = 'Gray') {
     Write-Host ('  {0,-11}' -f $step) -ForegroundColor Magenta -NoNewline
     Write-Host $text -ForegroundColor $colour

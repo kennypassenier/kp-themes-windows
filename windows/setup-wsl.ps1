@@ -58,55 +58,77 @@ function Get-Distros {
     return @(& wsl.exe --list --quiet 2>$null | ForEach-Object { ($_ -replace "`0", '').Trim() } | Where-Object { $_ })
 }
 
-Write-Host ''
-Write-Host "  WSL: $Distro for $User, Garuda-style" -ForegroundColor Cyan
-Write-Host ''
+# Everything this window shows also goes to logs\setup-wsl-<time>.log beside the kit,
+# and the Linux scripts write theirs there too, so a failed run can be read afterwards.
+$Logs = Join-Path $Base 'logs'
+New-Item -ItemType Directory -Path $Logs -Force | Out-Null
+$env:KP_LOG_DIR = $Logs
+# WSLENV hands KP_LOG_DIR to Linux as a Linux path (/p).
+$env:WSLENV = (@($env:WSLENV, 'KP_LOG_DIR/p') | Where-Object { $_ }) -join ':'
+try { Start-Transcript -Path (Join-Path $Logs "setup-wsl-$(Get-Date -Format 'yyyyMMdd-HHmmss').log") | Out-Null } catch { }
 
-# 1. The WSL platform itself.
-& wsl.exe --status *> $null
-if ($LASTEXITCODE -ne 0) {
-    if (-not (Test-Admin)) {
-        Say 'WSL is not installed yet. Restarting this script as administrator...' 'Yellow'
-        Start-Process powershell.exe -Verb RunAs -ArgumentList @('-ExecutionPolicy', 'Bypass', '-NoExit', '-File', "`"$PSCommandPath`"", '-User', $User, '-Distro', $Distro, '-Theme', $Theme)
-        Finish
+try {
+    Write-Host ''
+    Write-Host "  WSL: $Distro for $User, Garuda-style" -ForegroundColor Cyan
+    Write-Host ''
+
+    # 1. The WSL platform itself. `wsl --version` answers once the Store WSL is
+    # installed, with or without a distro; `wsl --status` can fail while there is none.
+    & wsl.exe --version *> $null
+    if ($LASTEXITCODE -ne 0) {
+        if (-not (Test-Admin)) {
+            Say 'WSL is not installed yet. Restarting this script as administrator...' 'Yellow'
+            Start-Process powershell.exe -Verb RunAs -ArgumentList @('-ExecutionPolicy', 'Bypass', '-NoExit', '-File', "`"$PSCommandPath`"", '-User', $User, '-Distro', $Distro, '-Theme', $Theme)
+            return
+        }
+        Say 'Installing the WSL platform...'
+        & wsl.exe --install --no-distribution
+        Say 'Reboot Windows, then run this script again (no administrator needed the second time).' 'Yellow'
         return
     }
-    Say 'Installing the WSL platform...'
-    & wsl.exe --install --no-distribution
-    Say 'Reboot Windows, then run this script again (no administrator needed the second time).' 'Yellow'
-    Finish
-    return
-}
-& wsl.exe --update *> $null
+    & wsl.exe --update *> $null
 
-# 2. Arch Linux.
-if ((Get-Distros) -notcontains $Distro) {
-    Say "Installing $Distro..."
-    & wsl.exe --install $Distro --no-launch
+    # 2. Arch Linux.
     if ((Get-Distros) -notcontains $Distro) {
-        # Older wsl.exe builds register the distro on first launch only.
-        & wsl.exe -d $Distro -u root -- true
+        Say "Installing $Distro..."
+        & wsl.exe --install $Distro --no-launch
+        if ((Get-Distros) -notcontains $Distro) {
+            # Older wsl.exe builds register the distro on first launch only.
+            & wsl.exe -d $Distro -u root -- true
+        }
     }
+    if ((Get-Distros) -notcontains $Distro) { throw "$Distro did not install; run 'wsl --list --online' to see what this Windows build offers." }
+
+    # 3. The root half, with its own folder as the working directory.
+    Say 'Bootstrapping (pacman, Chaotic-AUR, paru, the CLI tools). This takes a few minutes.'
+    & wsl.exe -d $Distro -u root --cd $LinuxWsl -- bash ./bootstrap-arch.sh $User
+    if ($LASTEXITCODE -ne 0) { throw "bootstrap-arch.sh failed (exit $LASTEXITCODE); scroll up for the pacman error, fix it, and run this script again." }
+
+    # 4. Restart so /etc/wsl.conf (systemd, default user) takes effect.
+    & wsl.exe --terminate $Distro | Out-Null
+
+    # 5. The user half: ~/Projects/kp-themes and its Linux install.
+    Say 'Cloning kp-themes into ~/Projects and setting up the shell.'
+    # PowerShell 5 drops an empty argument, so 'none' stands for no bundle.
+    $bundleArg = if (Test-Path $Bundle) { $Bundle } else { 'none' }
+    & wsl.exe -d $Distro -u $User --cd $LinuxWsl -- bash ./clone-kp-themes.sh $bundleArg $Theme
+    if ($LASTEXITCODE -ne 0) { throw "clone-kp-themes.sh failed (exit $LASTEXITCODE); scroll up for the error." }
+
+    # 6. The Windows kit, built from that clone, and the theme on the whole desktop.
+    & (Join-Path $Here 'install.ps1') -FromWsl -Distro $Distro -Theme $Theme
+
+    Say "Done. Your projects live in \\wsl.localhost\$Distro\home\$User\Projects; open Windows Terminal for Arch in fish." 'Cyan'
+
+    # What WSL says about itself, for the log.
+    Say ((& wsl.exe --list --verbose 2>&1 | ForEach-Object { ($_ -replace "`0", '').TrimEnd() } | Where-Object { $_ }) -join ' | ') 'DarkGray'
+} catch {
+    Say ((& wsl.exe --list --verbose 2>&1 | ForEach-Object { ($_ -replace "`0", '').TrimEnd() } | Where-Object { $_ }) -join ' | ') 'DarkGray'
+    Write-Host ''
+    Write-Host "  Setup stopped: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "  The log is in $Logs; running this again is safe, it picks up where it stopped." -ForegroundColor Yellow
+    # Keep the window open on an error, even without -Pause.
+    $Pause = $true
+} finally {
+    try { Stop-Transcript | Out-Null } catch { }
+    Finish
 }
-if ((Get-Distros) -notcontains $Distro) { throw "$Distro did not install; run 'wsl --list --online' to see what this Windows build offers." }
-
-# 3. The root half, with its own folder as the working directory.
-Say 'Bootstrapping (pacman, Chaotic-AUR, paru, the CLI tools). This takes a few minutes.'
-& wsl.exe -d $Distro -u root --cd $LinuxWsl -- bash ./bootstrap-arch.sh $User
-if ($LASTEXITCODE -ne 0) { throw "bootstrap-arch.sh failed (exit $LASTEXITCODE); scroll up for the pacman error, fix it, and run this script again." }
-
-# 4. Restart so /etc/wsl.conf (systemd, default user) takes effect.
-& wsl.exe --terminate $Distro | Out-Null
-
-# 5. The user half: ~/Projects/kp-themes and its Linux install.
-Say 'Cloning kp-themes into ~/Projects and setting up the shell.'
-# PowerShell 5 drops an empty argument, so 'none' stands for no bundle.
-$bundleArg = if (Test-Path $Bundle) { $Bundle } else { 'none' }
-& wsl.exe -d $Distro -u $User --cd $LinuxWsl -- bash ./clone-kp-themes.sh $bundleArg $Theme
-if ($LASTEXITCODE -ne 0) { throw "clone-kp-themes.sh failed (exit $LASTEXITCODE); scroll up for the error." }
-
-# 6. The Windows kit, built from that clone, and the theme on the whole desktop.
-& (Join-Path $Here 'install.ps1') -FromWsl -Distro $Distro -Theme $Theme
-
-Say "Done. Your projects live in \\wsl.localhost\$Distro\home\$User\Projects; open Windows Terminal for Arch in fish." 'Cyan'
-Finish
