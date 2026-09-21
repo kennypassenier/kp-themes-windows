@@ -18,19 +18,22 @@ const names = wanted.length > 0 ? wanted : all;
 
 // KP_CHROMIUM points at a Chromium when Playwright's own download is not there.
 const browser = await chromium.launch(process.env.KP_CHROMIUM ? { executablePath: process.env.KP_CHROMIUM } : {});
-const page = await browser.newPage({ viewport: { width: 3840, height: 2160 } });
+const page = await browser.newPage({ viewport: { width: 3840, height: 2160 }, deviceScaleFactor: 1 });
 for (const name of names) {
     // Two pictures per theme: the desktop, and the calmer one the lock and
     // sign-in screens draw their clock on.
-    for (const kind of ['wallpaper', 'wallpaper-lock']) {
+    for (const kind of ['wallpaper', 'wallpaper-lock', 'start']) {
         const svg = new URL(`${name}/${kind}.svg`, OUT);
         if (!existsSync(svg)) {
             console.error(`${name}: no ${kind}.svg; run \`npm run generate:windows\` first.`);
             process.exitCode = 1;
             continue;
         }
+        // The start button is a 64px glyph on nothing, drawn at twice its size.
+        const small = kind === 'start';
+        await page.setViewportSize(small ? { width: 64, height: 64 } : { width: 3840, height: 2160 });
         await page.goto(pathToFileURL(svg.pathname).href);
-        await page.screenshot({ path: new URL(`${name}/${kind}.png`, OUT).pathname });
+        await page.screenshot({ path: new URL(`${name}/${kind}.png`, OUT).pathname, omitBackground: small, scale: small ? 'device' : 'css' });
         console.log(`wrote windows/${name}/${kind}.png`);
     }
 }
