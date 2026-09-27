@@ -1,5 +1,5 @@
 {
-    "$generated": "kp-themes 7.1.0 (gates/generate-desktop.mjs). Do not edit.",
+    "$generated": "kp-themes 7.2.0 (gates/generate-desktop.mjs). Do not edit.",
     "scheme": {
         "name": "KP Shade (dark)",
         "background": "#002D38",
