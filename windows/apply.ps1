@@ -540,14 +540,16 @@ if (Step 'wsl') {
     if ($distros -contains $WslDistro) {
         $star = (Join-Path $SharedDir 'starship.toml') -replace '\\', '/'
         $fish = (Join-Path $SharedDir 'kp-colors.fish') -replace '\\', '/'
+        # A starship.toml that is a symlink belongs to another tool (the
+        # workstation repo links Kenny's own prompt there), so it is left alone.
         # PowerShell 5 mangles quotes in native arguments, so the script travels as base64.
-        $sh = "set -e`nmkdir -p ~/.config/fish/conf.d`ncp `"`$(wslpath -u '$star')`" ~/.config/starship.toml`ncp `"`$(wslpath -u '$fish')`" ~/.config/fish/conf.d/kp-colors.fish`nmkdir -p ~/.config/kp-themes`necho $Theme > ~/.config/kp-themes/current`n"
+        $sh = "set -e`nmkdir -p ~/.config/fish/conf.d`n[ -L ~/.config/starship.toml ] || cp `"`$(wslpath -u '$star')`" ~/.config/starship.toml`ncp `"`$(wslpath -u '$fish')`" ~/.config/fish/conf.d/kp-colors.fish`nmkdir -p ~/.config/kp-themes`necho $Theme > ~/.config/kp-themes/current`n"
         $b64 = [Convert]::ToBase64String($Utf8NoBom.GetBytes($sh))
         if (-not $DryRun) {
             $r = Invoke-Native 'wsl.exe' @('-d', $WslDistro, '-e', 'sh', '-c', "echo $b64 | base64 -d | sh")
             if ($r.Code -ne 0) { throw "copying into $WslDistro failed ($($r.Code)): $($r.Output -join ' ')" }
         }
-        Say 'wsl' "starship.toml and fish colours copied into $WslDistro"
+        Say 'wsl' "fish colours copied into $WslDistro, and starship.toml unless it is a symlink"
     } else { Say 'wsl' "no WSL distro '$WslDistro' (Tools\Setup WSL (Arch).cmd installs it), skipped" 'DarkGray' }
 }
 
