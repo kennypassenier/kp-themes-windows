@@ -12,8 +12,8 @@
 // the tokens. Two sources are read, never re-derived:
 //
 //   css/themes.css           every token and derived state, via derivedBlock()
-//   vscode/kp-*.json         the sixteen ANSI colours, so VS Code, Windows
-//                            Terminal and Konsole show the same palette
+//   gates/terminal.mjs       the terminal colours and the sixteen ANSI, the
+//                            same derivation VS Code's terminal.* keys use
 //
 // What is NOT generated is hand-written beside the output: the install and
 // apply scripts of each platform (desktop/windows/*.ps1, desktop/linux/*.sh)
@@ -26,7 +26,8 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import process from 'node:process';
 import { themes } from './check-invariants.mjs';
-import { derivedBlock, rgbOf } from './generate-tui-palette.mjs';
+import { derivedBlock, rgbOf } from './palette.mjs';
+import { terminalColors } from './terminal.mjs';
 
 const ROOT = new URL('../', import.meta.url);
 const OUT = new URL('../desktop/', import.meta.url);
@@ -107,13 +108,7 @@ function load(theme) {
         c[/** @type {keyof typeof ROLES} */ (role)] = rgbOf(value);
     }
     const raw = JSON.parse(readFileSync(new URL(`themes/${theme.name}/tokens.json`, ROOT), 'utf8'));
-    const vscodePath = new URL(`vscode/kp-${theme.name}-color-theme.json`, ROOT);
-    let vscode;
-    try {
-        vscode = JSON.parse(readFileSync(vscodePath, 'utf8')).colors;
-    } catch {
-        throw new Error(`${theme.name}: vscode/kp-${theme.name}-color-theme.json is missing. Run \`npm run generate:vscode\` first.`);
-    }
+    const vscode = terminalColors(theme.name);
     return {
         name: theme.name,
         label: raw.label ?? theme.name,
