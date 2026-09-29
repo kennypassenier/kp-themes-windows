@@ -20,7 +20,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import process from 'node:process';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-const DESK = new URL('../desktop/', import.meta.url);
+const DESK = new URL('../', import.meta.url);
 const all = JSON.parse(readFileSync(new URL('shared/themes.json', DESK), 'utf8')).map((/** @type {{name: string}} */ t) => t.name);
 const wanted = process.argv.slice(2).filter((a) => !a.startsWith('-'));
 const names = wanted.length > 0 ? wanted : all;

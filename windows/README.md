@@ -1,4 +1,4 @@
-# desktop/windows/
+# windows/
 
 A kp-themes theme on Windows 11: Windows Terminal and the PowerShell prompt,
 FireDragon, Mica For Everyone, the accent colour, the wallpaper, the lock and
@@ -8,16 +8,16 @@ centre and Explorer.
 ## Where it runs
 
 Everything runs from the repo, which lives in WSL
-(`\\wsl.localhost\archlinux\home\<you>\Projects\kp-themes`): pin
-`desktop\windows\launchers\` in Explorer and double-click from there.
+(`\\wsl.localhost\archlinux\home\<you>\Projects\kp-themes-windows`): pin
+`windows\launchers\` in Explorer and double-click from there.
 
 ```
-desktop\windows\launchers\
+windows\launchers\
   Themes\   one .cmd per theme: the whole desktop in that theme
-  Tools\    Install VS Code themes, Context menu (Windows 10 / 11 style), Setup WSL (Arch)
+  Tools\    Context menu (Windows 10 / 11 style), Setup WSL (Arch)
 ```
 
-A switch copies `desktop\windows` and `desktop\shared` to
+A switch copies `windows` and `shared` to
 `%LOCALAPPDATA%\kp-themes\run` (only what changed) and runs from that copy, so
 the elevated half (Windhawk, the lock screen) never reads from WSL.
 `%LOCALAPPDATA%\kp-themes\` also keeps `current.txt`, the Oh My Posh config
@@ -26,11 +26,12 @@ the elevated half (Windhawk, the lock screen) never reads from WSL.
 ## First time
 
 1. From a copy of this repo on the Windows disk (a zip from GitHub will do):
-   `desktop\windows\launchers\Tools\Setup WSL (Arch).cmd`. The first run
+   `windows\launchers\Tools\Setup WSL (Arch).cmd`. The first run
    installs WSL (administrator, then reboot); run it again. It installs Arch,
-   bootstraps it like Garuda, clones this repo into `~/Projects/kp-themes`,
-   builds the fonts and wallpapers there and applies the theme from the clone.
-2. After a `git pull` in WSL: `desktop/linux/install.sh --build-only`.
+   bootstraps it like Garuda, clones this repo and kp-themes-linux into
+   `~/Projects`, builds the fonts and wallpapers and applies the theme from
+   the clone.
+2. After a `git pull` in WSL: `npm run build` in `~/Projects/kp-themes-windows`.
 
 Projects live in WSL, where Linux tools are fast and nothing needs Windows
 permissions; VS Code opens them with the WSL extension.
@@ -42,7 +43,6 @@ permissions; VS Code opens them with the WSL extension.
 | `apply.ps1`          | a theme switch; `kp.ps1` is a short name for it                                      |
 | `setup-wsl.ps1`      | Arch in WSL and the clone in `~/Projects`                                            |
 | `context-menu.ps1`   | `-Style Classic` (Windows 10: everything at once) or `-Style Modern`; HKCU, no admin |
-| `install-vscode.ps1` | the 22 VS Code themes as one extension; the active theme stays yours                 |
 | `install-fonts.ps1`  | the theme fonts, per user                                                            |
 | `msstyles.md`        | what the Windhawk layer cannot reach, and what it costs to go there                  |
 | `themes/<theme>/`    | generated, see below                                                                 |

@@ -1,0 +1,7 @@
+node_modules
+# Built, not committed: npm run fonts, npm run wallpapers.
+vendor/fonts/
+shared/fonts/
+shared/*/wallpaper.png
+shared/*/wallpaper-lock.png
+windows/themes/*/start.png

@@ -1,9 +1,10 @@
 """The shipped fonts as TrueType, for the Windows and Linux desktop.
 
 Windows and fontconfig want .ttf or .otf, not .woff2, so the desktop scripts cannot use
-fonts/ as it is. This decompresses every face in fonts/families.json into
-desktop/shared/fonts/<file>.ttf (ignored by git: they are rebuilt from fonts/, which
-is the source) and writes desktop/shared/fonts/fonts.json, which maps each family
+the woff2 of kp-themes as they are. This decompresses every face in
+vendor/fonts/families.json (scripts/fetch-fonts.sh puts the pinned release's fonts
+there) into shared/fonts/<file>.ttf (ignored by git: they are rebuilt from the
+release, which is the source) and writes shared/fonts/fonts.json, which maps each family
 name a theme's font stack can name to its files.
 
 The family name is the one the themes' font stacks use: families.json's
@@ -22,8 +23,8 @@ from pathlib import Path
 from fontTools.ttLib import TTFont
 
 ROOT = Path(__file__).resolve().parent.parent
-SRC = ROOT / "fonts"
-OUT = ROOT / "desktop" / "shared" / "fonts"
+SRC = ROOT / "vendor" / "fonts"
+OUT = ROOT / "shared" / "fonts"
 
 
 def set_family(font: TTFont, family: str) -> None:
@@ -50,7 +51,7 @@ def main() -> None:
             font.save(str(target))
             index.setdefault(family, []).append(target.name)
     (OUT / "fonts.json").write_text(json.dumps(dict(sorted(index.items())), indent=4) + "\n", encoding="utf-8")
-    print(f"wrote {sum(len(v) for v in index.values())} faces in {len(index)} families to desktop/shared/fonts/")
+    print(f"wrote {sum(len(v) for v in index.values())} faces in {len(index)} families to shared/fonts/")
 
 
 if __name__ == "__main__":

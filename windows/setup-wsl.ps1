@@ -6,22 +6,22 @@
     Run it twice if WSL itself is not installed yet:
       1st run  installs the WSL platform (needs administrator rights, then a reboot)
       2nd run  installs Arch and, in it:
-               - ..\linux\wsl\bootstrap-arch.sh as root: pacman, Chaotic-AUR, paru, the
+               - ..\wsl\bootstrap-arch.sh as root: pacman, Chaotic-AUR, paru, the
                  CLI tools, your user (asks for a Linux password), /etc/wsl.conf
-               - ..\linux\wsl\clone-kp-themes.sh as you: clones kp-themes into
-                 ~/Projects/kp-themes (plus the branches in -Bundle, a git bundle, if
-                 given) and runs desktop/linux/install.sh (fish, Starship, fonts, the
+               - ..\wsl\clone-kp-themes.sh as you: clones kp-themes-linux and
+                 kp-themes-windows into ~/Projects (plus the branches in -Bundle, a git
+                 bundle, if given) and runs kp-themes-linux/linux/install.sh (fish, Starship, fonts, the
                  wallpapers built)
                then applies the theme from that clone, with Arch as the default tab in
                Windows Terminal. From then on the clone is the only copy: the files to
-               double-click are in its desktop\windows\launchers\.
+               double-click are in its windows\launchers\.
 
     Safe to run again: every step checks before it changes anything.
 
 .EXAMPLE
-    powershell -ExecutionPolicy Bypass -File .\desktop\windows\setup-wsl.ps1
+    powershell -ExecutionPolicy Bypass -File .\windows\setup-wsl.ps1
 .EXAMPLE
-    .\desktop\windows\setup-wsl.ps1 -User kenny -Theme cyberpunk
+    .\windows\setup-wsl.ps1 -User kenny -Theme cyberpunk
 #>
 [CmdletBinding()]
 param(
@@ -38,9 +38,9 @@ param(
 # turn into a terminating error. Each step below checks $LASTEXITCODE instead.
 $ErrorActionPreference = 'Continue'
 $Here = $PSScriptRoot
-# desktop\windows\ beside desktop\linux\, in a copy of the repo on this disk.
+# windows\ beside wsl\, in a copy of the repo on this disk.
 $Base = Split-Path $Here -Parent
-$LinuxWsl = Join-Path $Base 'linux\wsl'
+$LinuxWsl = Join-Path $Base 'wsl'
 $State = Join-Path $env:LOCALAPPDATA 'kp-themes'
 if (-not $Theme) {
     $current = Join-Path $State 'current.txt'
@@ -110,8 +110,8 @@ try {
     # 4. Restart so /etc/wsl.conf (systemd, default user) takes effect.
     & wsl.exe --terminate $Distro | Out-Null
 
-    # 5. The user half: ~/Projects/kp-themes and its Linux install.
-    Say 'Cloning kp-themes into ~/Projects and setting up the shell.'
+    # 5. The user half: ~/Projects/kp-themes-linux and -windows, and the Linux install.
+    Say 'Cloning kp-themes-linux and kp-themes-windows into ~/Projects and setting up the shell.'
     # PowerShell 5 drops an empty argument, so 'none' stands for no bundle.
     $bundleArg = if ($Bundle -and (Test-Path $Bundle)) { $Bundle } else { 'none' }
     # -e, not --: -- hands the line to the login shell (fish), which chokes on a Windows path.
@@ -120,10 +120,10 @@ try {
 
     # 6. The theme on the whole desktop, from the clone.
     $linuxHome = ((& wsl.exe -d $Distro -u $User -e sh -c 'echo $HOME') -join '').Trim()
-    $clone = "\\wsl.localhost\$Distro" + ($linuxHome -replace '/', '\') + '\Projects\kp-themes'
-    & (Join-Path $clone 'desktop\windows\apply.ps1') -Theme $Theme
+    $clone = "\\wsl.localhost\$Distro" + ($linuxHome -replace '/', '\') + '\Projects\kp-themes-windows'
+    & (Join-Path $clone 'windows\apply.ps1') -Theme $Theme
 
-    Say "Done. The repo is $clone; double-click a theme in desktop\windows\launchers\Themes." 'Cyan'
+    Say "Done. The repo is $clone; double-click a theme in windows\launchers\Themes." 'Cyan'
 
     # What WSL says about itself, for the log.
     Say ((& wsl.exe --list --verbose 2>&1 | ForEach-Object { ($_ -replace "`0", '').TrimEnd() } | Where-Object { $_ }) -join ' | ') 'DarkGray'

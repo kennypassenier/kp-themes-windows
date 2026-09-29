@@ -1,0 +1,20 @@
+{
+    "name": "kp-themes-windows",
+    "version": "1.0.0",
+    "description": "The kp-themes themes on Windows 11: Windows Terminal, Oh My Posh, Windhawk, Mica For Everyone, accent, wallpaper and lock screen.",
+    "private": true,
+    "type": "module",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/kennypassenier/kp-themes-windows.git"
+    },
+    "scripts": {
+        "generate": "node gates/generate-desktop.mjs",
+        "check": "node gates/check-vendor.mjs && node gates/generate-desktop.mjs --check",
+        "fonts": "scripts/fetch-fonts.sh && python3 gates/desktop-fonts.py",
+        "wallpapers": "node gates/render-wallpapers.mjs",
+        "build": "npm run generate && npm run fonts && npm run wallpapers",
+        "vendor": "scripts/vendor-kp-themes.sh"
+    }
+}

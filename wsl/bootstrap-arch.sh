@@ -2,12 +2,12 @@
 # The root half of turning a fresh Arch Linux WSL distro into a Garuda-like
 # dev shell: pacman settings, Chaotic-AUR and paru, the CLI tools a Garuda
 # install ships, the user, and /etc/wsl.conf. Run as root, once, by
-# desktop/windows/setup-wsl.ps1:
+# windows/setup-wsl.ps1:
 #
 #   wsl -d archlinux -u root --cd <this folder> -e bash ./bootstrap-arch.sh <user>
 #
-# The user half (fish config, fonts, the theme) is desktop/linux/install.sh,
-# which setup-wsl.ps1 runs from the clone in ~/Projects/kp-themes afterwards.
+# The user half (fish config, fonts, the theme) is kp-themes-linux/linux/install.sh,
+# which setup-wsl.ps1 runs from the clone in ~/Projects/kp-themes-linux afterwards.
 # Safe to run again: steps check before they change anything.
 set -euo pipefail
 

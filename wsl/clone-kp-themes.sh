@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
-# Clones kp-themes into ~/Projects inside WSL, as the user, and runs its Linux
-# install. Called by desktop/windows/setup-wsl.ps1 after bootstrap-arch.sh:
+# Clones kp-themes-linux and kp-themes-windows into ~/Projects inside WSL, as
+# the user, and runs the Linux
+# install. Called by windows/setup-wsl.ps1 after bootstrap-arch.sh; a bundle
+# (work not on GitHub yet) goes into the kp-themes-windows clone:
 #
 #   wsl -d archlinux -u <user> --cd <this folder> -e bash ./clone-kp-themes.sh [bundle] [theme]
 #
@@ -20,18 +22,21 @@ BUNDLE="${1:-}"
 # setup-wsl.ps1 passes a Windows path.
 case "$BUNDLE" in none) BUNDLE="" ;; *:\\*) BUNDLE="$(wslpath -u "$BUNDLE")" ;; esac
 THEME="${2:-}"
-URL="${KP_THEMES_URL:-https://github.com/kennypassenier/kp-themes.git}"
-DEST="$HOME/Projects/kp-themes"
+BASE="${KP_THEMES_BASE:-https://github.com/kennypassenier}"
+LINUX="$HOME/Projects/kp-themes-linux"
+DEST="$HOME/Projects/kp-themes-windows"
 say() { printf '\n\033[1;35m==>\033[0m \033[1m%s\033[0m\n' "$*"; }
 
-say "$DEST"
 mkdir -p "$HOME/Projects"
-if [ -d "$DEST/.git" ]; then
-    echo "    already cloned; fetching"
-    git -C "$DEST" fetch --quiet origin
-else
-    git clone "$URL" "$DEST"
-fi
+for repo in "$LINUX" "$DEST"; do
+    say "$repo"
+    if [ -d "$repo/.git" ]; then
+        echo "    already cloned; fetching"
+        git -C "$repo" fetch --quiet origin
+    else
+        git clone "$BASE/$(basename "$repo").git" "$repo"
+    fi
+done
 
 # Git in WSL signs commits as the same person as Git on Windows, if that is set up.
 for key in user.name user.email; do
@@ -57,4 +62,7 @@ if [ -n "$BUNDLE" ] && [ -f "$BUNDLE" ]; then
     [ -n "$first" ] && git -C "$DEST" checkout --quiet "$first" && echo "    checked out $first"
 fi
 
-bash "$DEST/desktop/linux/install.sh" ${THEME:+--theme "$THEME"}
+say "build: kp-themes-windows' fonts and wallpapers"
+(cd "$DEST" && node gates/generate-desktop.mjs --check >/dev/null && scripts/fetch-fonts.sh && python3 gates/desktop-fonts.py && node gates/render-wallpapers.mjs >/dev/null)
+
+bash "$LINUX/linux/install.sh" ${THEME:+--theme "$THEME"}

@@ -18,9 +18,9 @@
       wsl         starship.toml and fish colours inside the Arch WSL distro, if installed
 
 .EXAMPLE
-    powershell -ExecutionPolicy Bypass -File .\desktop\windows\apply.ps1 -Theme synthwave
+    powershell -ExecutionPolicy Bypass -File .\windows\apply.ps1 -Theme synthwave
 .EXAMPLE
-    .\desktop\windows\apply.ps1 -Theme cyberpunk -Skip wallpaper,accent -DryRun
+    .\windows\apply.ps1 -Theme cyberpunk -Skip wallpaper,accent -DryRun
 #>
 [CmdletBinding()]
 param(
@@ -57,7 +57,7 @@ param(
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version 2
 
-# desktop\windows\ beside desktop\shared\, in the repo.
+# windows\ beside shared\, in the repo.
 $Root = $PSScriptRoot
 $Shared = Join-Path (Split-Path $Root -Parent) 'shared'
 $Stamp = Get-Date -Format 'yyyyMMdd-HHmmss'
@@ -67,12 +67,12 @@ $Utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 $State = Join-Path $env:LOCALAPPDATA 'kp-themes'
 
 # Started from the clone in WSL (\\wsl.localhost\...): run from a local copy of
-# desktop\windows and desktop\shared instead. The administrator half of a switch
+# windows\ and shared\ instead. The administrator half of a switch
 # (Windhawk, the lock screen) then never depends on WSL being reachable from an
 # elevated process, and the copy is refreshed on every switch (only what changed).
 if ($PSScriptRoot -like '\\*') {
     $run = Join-Path $State 'run'
-    Write-Host "  copying desktop\ from WSL to $run (the first time takes a moment)" -ForegroundColor DarkGray
+    Write-Host "  copying windows\ and shared\ from WSL to $run (the first time takes a moment)" -ForegroundColor DarkGray
     foreach ($part in 'windows', 'shared') {
         $roboArgs = @((Join-Path (Split-Path $Root -Parent) $part), (Join-Path $run $part), '/MIR', '/NFL', '/NDL', '/NJH', '/NJS', '/NP', '/R:1', '/W:1', '/XD', 'launchers')
         & robocopy.exe @roboArgs | Out-Null

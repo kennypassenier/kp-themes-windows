@@ -1,5 +1,5 @@
 {
-    "$generated": "kp-themes 7.3.0 (gates/generate-desktop.mjs). Do not edit.",
+    "$generated": "kp-themes-windows 1.0.0, tokens from kp-themes 8.0.0 (gates/generate-desktop.mjs). Do not edit.",
     "scheme": {
         "name": "KP Terminal",
         "background": "#0B0E0B",
