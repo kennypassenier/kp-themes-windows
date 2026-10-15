@@ -11,4 +11,40 @@ BackgroundEffects:
   type: acrylicblur
   AccentBlurBehind: 'A115191E'
 FlyoutsEffects: 1
-RuledPrograms: []
+# Installers draw a hard-coded white banner; light system text on it is unreadable, so they stay opaque with the stock colours.
+RuledPrograms:
+  - target: setup.exe
+    RenderingMod:
+      ThemeBackground: 0
+      AccentColorControls: 0
+    BackgroundEffects:
+      type: none
+      AccentBlurBehind: 'A115191E'
+  - target: install.exe
+    RenderingMod:
+      ThemeBackground: 0
+      AccentColorControls: 0
+    BackgroundEffects:
+      type: none
+      AccentBlurBehind: 'A115191E'
+  - target: installer.exe
+    RenderingMod:
+      ThemeBackground: 0
+      AccentColorControls: 0
+    BackgroundEffects:
+      type: none
+      AccentBlurBehind: 'A115191E'
+  - target: unins000.exe
+    RenderingMod:
+      ThemeBackground: 0
+      AccentColorControls: 0
+    BackgroundEffects:
+      type: none
+      AccentBlurBehind: 'A115191E'
+  - target: unins001.exe
+    RenderingMod:
+      ThemeBackground: 0
+      AccentColorControls: 0
+    BackgroundEffects:
+      type: none
+      AccentBlurBehind: 'A115191E'

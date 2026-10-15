@@ -796,6 +796,14 @@ export function dialogTintAlpha(ground, dark) {
 }
 
 /**
+ * Programs Translucent Windows leaves alone on a dark theme: setup wizards
+ * (NSIS, Inno) paint their banner white themselves, so the light system text
+ * SysColors sets is unreadable on it. A rule matches an exact process name
+ * (no wildcards), so this is a list to extend: add the installer's file name.
+ */
+const PLAIN_PROGRAMS = ['setup.exe', 'install.exe', 'installer.exe', 'unins000.exe', 'unins001.exe'];
+
+/**
  * Translucent Windows is not a styler: it takes one settings document, and
  * it is what gives ordinary windows, menus and tooltips their backdrop. The
  * keys follow the mod's own settings block as of 1.8.2 (read from
@@ -822,6 +830,7 @@ export function dialogTintAlpha(ground, dark) {
  */
 function windhawkTranslucent(d) {
     const dark = d === null || d.dark;
+    const plain = dark ? PLAIN_PROGRAMS : [];
     const ground = d === null ? /** @type {Rgb} */ ([16, 16, 16]) : d.c.ground;
     const alpha = dialogTintAlpha(ground, dark);
     const tint = `${alpha.toString(16).padStart(2, '0').toUpperCase()}${hex(ground).slice(1)}`;
@@ -839,8 +848,7 @@ BackgroundEffects:
   type: acrylicblur
   AccentBlurBehind: '${tint}'
 FlyoutsEffects: 1
-RuledPrograms: []
-`;
+${plain.length === 0 ? 'RuledPrograms: []\n' : `# Installers draw a hard-coded white banner; light system text on it is unreadable, so they stay opaque with the stock colours.\nRuledPrograms:\n${plain.map((t) => `  - target: ${t}\n    RenderingMod:\n      ThemeBackground: 0\n      AccentColorControls: 0\n    BackgroundEffects:\n      type: none\n      AccentBlurBehind: '${tint}'\n`).join('')}`}`;
     /** @type {[string, string | number][]} */
     const settings = [
         ['RenderingMod.ThemeBackground', 1],
@@ -850,6 +858,15 @@ RuledPrograms: []
         ['BackgroundEffects.AccentBlurBehind', tint],
         ['FlyoutsEffects', 1],
     ];
+    plain.forEach((target, i) => {
+        settings.push(
+            [`RuledPrograms[${i}].target`, target],
+            [`RuledPrograms[${i}].RenderingMod.ThemeBackground`, 0],
+            [`RuledPrograms[${i}].RenderingMod.AccentColorControls`, 0],
+            [`RuledPrograms[${i}].BackgroundEffects.type`, 'none'],
+            [`RuledPrograms[${i}].BackgroundEffects.AccentBlurBehind`, tint],
+        );
+    });
     return { text, settings };
 }
 
